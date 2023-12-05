@@ -23,4 +23,7 @@ Our model will predict which kind of terrains lies ahead of a rover: from soil, 
 mv archive.zip <your-path-to-the-repo>/drive-on-mars/raw_data
 cd <your-path-to-the-repo>/drive-on-mars/raw_data
 unzip archive.zip
+rm archive.zip
+
+pip install -r requirements
 ```
