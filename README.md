@@ -12,7 +12,10 @@ Our model will predict which kind of terrains lies ahead of a rover: from soil, 
 # To work on this project:
 
 ## Clone this repo
-`git clone  git@github.com:TigerManon/drive-on-mars.git`
+```
+git clone  git@github.com:TigerManon/drive-on-mars.git
+```
+
 
 ## Download the data from Kaggle
 
