@@ -16,13 +16,17 @@ Our model will predict which kind of terrains lies ahead of a rover: from soil, 
 git clone  git@github.com:TigerManon/drive-on-mars.git
 ```
 
+
 ## Download the data from Kaggle
 
 [AI4MARS dataset](https://www.kaggle.com/datasets/yash92328/ai4mars-terrainaware-autonomous-driving-on-mars/data)
 
 
 ```
-mv archive.zip ~/code/TigerManon/drive-on-mars/raw_data
-cd ~/code/TigerManon/drive-on-mars/raw_data
+mv archive.zip <your-path-to-the-repo>/drive-on-mars/raw_data
+cd <your-path-to-the-repo>/drive-on-mars/raw_data
 unzip archive.zip
+rm archive.zip
+
+pip install -r requirements
 ```
