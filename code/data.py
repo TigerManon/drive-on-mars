@@ -5,22 +5,7 @@ import pandas as pd
 
 import cv2
 
-# from params import IMAGE_PATH, MASK_ROVER, RANGE_30M, MASK_PATH_TRAIN
-
-
-# Customize your path here
-root_path = '../'
-
-DATA_PATH = os.path.join(root_path, 'raw_data', 'ai4mars-dataset-merged-0.1', 'msl')
-
-IMAGE_PATH = os.path.join(DATA_PATH, 'images', 'edr')
-MASK_PATH_TRAIN = os.path.join(DATA_PATH, 'labels', 'train')
-MASK_PATH_TESTS = os.path.join(DATA_PATH, 'labels', 'test')
-TESTS_DIR = ['masked-gold-min1-100agree', 'masked-gold-min2-100agree', 'masked-gold-min3-100agree']
-
-MASK_ROVER = os.path.join(DATA_PATH, 'images', 'mxy')
-RANGE_30M = os.path.join(DATA_PATH, 'images', 'rng-30m')
-
+from drive_on_mars.params import IMAGE_PATH, MASK_ROVER, RANGE_30M, MASK_PATH_TRAIN
 
 
 def create_df(path):
