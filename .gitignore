@@ -1,2 +1,16 @@
+.env
+
+# OS generated files #
+######################
+.DS_Store
+__MACOSX
+
+# Jupiter Notebook #
+.pytest_cache
+__pycache__
+*checkpoint.ipynb
+*.ipynb_checkpoints
+
+# Data #
 raw_data/
-.ipynb_checkpoints/
+*.csv
