@@ -20,25 +20,21 @@ from tensorflow.keras.layers import Input, Conv2D, MaxPooling2D, UpSampling2D, c
 
 from drive_on_mars.model.model import initialize_model, compile_model, train_model
 from drive_on_mars.model.registry import save_model, save_results, load_model
-
+from drive_on_mars.model.data import create_df, preproc_image, load_mask, preproc, load_preproc, decompose_label, load_images
 
 #####################
 # Data & Preprocess #
 #####################
 
-def preprocess():
-    pass
+def preprocessing():
 
+    df_train = create_df(MASK_PATH_TRAIN)
 
+    X_train, y_train = load_images(df_train)
 
+    print("✅ preprocessing done")
 
-
-
-
-
-
-    print("✅ preprocess done")
-
+    return X_train, y_train
 
 ##################
 # Model Training #
@@ -52,18 +48,9 @@ def model_training():
     - Compute & save a validation performance metric
     """
     # Train Test Val Split - Create X_train, X_test, y_train, y_test, X_val, y_val #
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size = 0.3, random_state = 42)
+    X_train_preproc, X_test_preproc, y_train_preproc, y_test_preproc = train_test_split(
+        X_train, y_train, test_size = 0.3, random_state = 42)
 
-    X_test, X_val, y_test, y_val = train_test_split(
-        X_test, y_test, test_size = 0.5, random_state = 42)  # test=15%
-
-    '''
-    ?????????????????????
-    # Create X_train_processed using '??DATA??.py'
-    X_train_processed = preprocess(X_train)
-    ?????????????????????
-    '''
 
     # Train the model on the training set, using 'model.py' #
     model = None
@@ -71,11 +58,11 @@ def model_training():
     batch_size = 256
     patience = 2
 
-    model = initialize_model(input_shape=X_train.shape[1:])
+    model = initialize_model(input_shape=X_train_preproc.shape[1:])
     model = compile_model(model, learning_rate=learning_rate)
     model, history = train_model(model,
-                                X_train,
-                                y_train,
+                                X_train_preproc,
+                                y_train_preproc,
                                 batch_size=batch_size,
                                 patience=patience,
                                 validation_data=None, # overrides validation_split
@@ -109,8 +96,8 @@ def pred(X_test):
     Load the model & make a prediction
     """
     model = load_model()
-    X_processed = preprocess_features(X_pred)
-    y_pred = model.predict(X_processed)
+    X_pred_processed = preproc_image('Path image')
+    y_pred = model.predict(X_pred_processed)
 
     print(f"✅ pred() done")
 
@@ -118,7 +105,8 @@ def pred(X_test):
 
 
 if __name__ == '__main__':
-    preprocess()
+    create_df()
+    load_mask()
     model_training()
     pred()
     save_model()
