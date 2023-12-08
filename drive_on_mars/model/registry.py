@@ -1,13 +1,14 @@
 ###########
 # Imports #
 ###########
-
+MODEL_TARGET = "local"
 import os
 import time
 import pickle
 import glob
 from colorama import Fore, Style
 from tensorflow import keras
+from params import LOCAL_REGISTRY_PATH
 
 
 def save_model(model: keras.Model = None) -> None:
@@ -28,10 +29,8 @@ def load_model(stage="Production") -> keras.Model:
     Return a saved model:
     - locally (latest one in alphabetical order)
     - or from GCS (most recent one) if MODEL_TARGET=='gcs'  --> for unit 02 only
-    - or from MLFLOW (by "stage") if MODEL_TARGET=='mlflow' --> for unit 03 only
 
     Return None (but do not Raise) if no model is found
-
     """
     if MODEL_TARGET == "local":
         print(Fore.BLUE + f"\nLoad latest model from local registry..." + Style.RESET_ALL)
