@@ -14,6 +14,8 @@ TESTS_DIR = ['masked-gold-min1-100agree', 'masked-gold-min2-100agree', 'masked-g
 MASK_ROVER = os.path.join(DATA_PATH, 'images', 'mxy')
 RANGE_30M = os.path.join(DATA_PATH, 'images', 'rng-30m')
 
+LOCAL_REGISTRY_PATH = os.path.join(PACKAGE_PATH, 'raw_data')
+MODEL_TARGET = "local"
 
 labels_key = {
     0: 'soil',
