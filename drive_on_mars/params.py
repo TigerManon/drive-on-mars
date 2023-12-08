@@ -2,9 +2,9 @@ import os
 
 
 # Customize your path here
-PACKAGE_PATH = os.path.dirname(os.getcwd())
+root_path = '../'
 
-DATA_PATH = os.path.join(PACKAGE_PATH, 'raw_data', 'ai4mars-dataset-merged-0.1', 'msl')
+DATA_PATH = os.path.join(root_path, 'raw_data', 'ai4mars-dataset-merged-0.1', 'msl')
 
 IMAGE_PATH = os.path.join(DATA_PATH, 'images', 'edr')
 MASK_PATH_TRAIN = os.path.join(DATA_PATH, 'labels', 'train')
