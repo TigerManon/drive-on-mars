@@ -5,7 +5,7 @@ import pandas as pd
 
 import cv2
 
-from drive_on_mars.params import IMAGE_PATH, MASK_ROVER, RANGE_30M, MASK_PATH_TRAIN
+from drive_on_mars.params import IMAGE_PATH, MASK_ROVER, RANGE_30M, MASK_PATH_TRAIN, RESIZE_SHAPE
 
 
 def create_df(path):
@@ -58,45 +58,83 @@ def create_df(path):
     return df
 
 
-def load_image_set(im_id, df):
+def preproc_image(image_file):
+    """
+    Each image is set to a single channel greyscale and resized
+    """
+    image_raw = cv2.imread(image_file)
+    image = image_raw[:,:,0]
+    image = cv2.resize(image, dsize = (RESIZE_SHAPE, RESIZE_SHAPE))
+
+    return image
+
+
+def load_mask(im_id, df):
+    """
+    Loading both range and rover masks combined
+    """
+    # Load and combine both masks with the proper resize
+    rov_mask_file = f'{df.rov_mask.iloc[im_id]}.png'
+    rov_mask = preproc_image(os.path.join(MASK_ROVER,rov_mask_file))
+    rang_mask_file = f'{df.rang_mask.iloc[im_id]}.png'
+    rang_mask = preproc_image(os.path.join(RANGE_30M,rang_mask_file))
+
+    # reversing mask to only keep the image out of the mask
+    mask = (1-rov_mask) * (1-rang_mask)
+
+    return mask
+
+
+def preproc(df, use_mask = False, write_output=False):
+    """
+    DEV: Method to preprocess the data and save the output
+    """
+    for im_id in df.index:
+        # Load raw image
+        img_name = f'{df.name.iloc[im_id]}.JPG'
+        image = preproc_image(img_name)
+        preproc_img_name = f'{df.name.iloc[im_id]}_preproc.JPG'
+
+        if use_mask:
+            mask = load_mask(im_id, df)
+            image = image * mask
+            preproc_img_name = f'{df.name.iloc[im_id]}_masked.JPG'
+
+        if write_output:
+            cv2.imwrite(preproc_img_name, image)
+
+
+
+def load_preproc(im_id, df, use_mask = False):
     """
     Returns list of 2D arrays for each image as part of a set
     Input:  index of the image dataset dataframe
             the dataframe for the image dataset (train or test)
     Output:
-            raw image
+            image
             labeled image
-
     """
 
     # Load raw image
-    edr_file = f'{df.name.iloc[im_id]}.JPG'
-    image_raw = cv2.imread(os.path.join(IMAGE_PATH,edr_file))
-    image = image_raw[:,:,0]
+    edr_file = os.path.join(IMAGE_PATH,edr_file, f'{df.name.iloc[im_id]}.JPG')
+    image = preproc_image(edr_file)
 
     # Load labels
-    label_file = f'{df.label.iloc[im_id]}.png'
-    label_raw = cv2.imread(os.path.join(MASK_PATH_TRAIN,label_file))
-    label = label_raw[:,:,0]
+    label_file = os.path.join(MASK_PATH_TRAIN, f'{df.label.iloc[im_id]}.png')
+    label = preproc_image(label_file)
 
     # Changing scale for the 'No label' encoded as 255
     label[label == 255] = 4
 
-    # Load and combine both masks
-    rov_mask_file = f'{df.rov_mask.iloc[im_id]}.png'
-    rov_mask_raw = np.array(cv2.imread(os.path.join(MASK_ROVER,rov_mask_file)))
-    rov_mask = np.zeros((1024,1024))
-    rov_mask[:,:] = rov_mask_raw[:,:,0]
+    # Scaler for raw images between 0 and 1
+    image = image / 255
 
-    rang_mask_file = f'{df.rang_mask.iloc[im_id]}.png'
-    rang_mask_raw = np.array(cv2.imread(os.path.join(RANGE_30M,rang_mask_file)))
-    rang_mask = np.zeros((1024,1024))
-    rang_mask[:,:] = rang_mask_raw[:,:,0]
+    if use_mask:
+        mask = load_mask(im_id, df)
+        image = image * mask
+        label = label * mask
 
-    # reversing mask to only keep the image out of the mask
-    mask = (1-rov_mask) * (1-rang_mask)
-
-    return [image, label, mask]
+    return [image, label]
 
 
 
@@ -121,10 +159,10 @@ def load_images(df):
     """
     X, y = [], []
     for i in df.index:
-        [image, label, mask] = load_image_set(i, df)
+        [image, label] = load_preproc(i, df)
 
-        X.append(image * mask)
-        y.append(label * mask)
+        X.append(image)
+        y.append(label)
 
     X = np.array(X)
     y = np.array(y)
@@ -139,8 +177,8 @@ if __name__ == '__main__':
 
     small_dataset = 100
 
-    df = create_df(MASK_PATH_TRAIN)
+    df_train = create_df(MASK_PATH_TRAIN)
+    df_train = df_train.iloc[:small_dataset]
 
-    df = df.iloc[:100]
-
-    X, y = load_images(df)
+    X_train, y_train = load_images(df_train)
+    print(X_train.shape, y_train.shape)
