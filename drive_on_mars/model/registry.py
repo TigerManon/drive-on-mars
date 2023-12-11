@@ -8,7 +8,9 @@ import pickle
 import glob
 from colorama import Fore, Style
 from tensorflow import keras
-from params import LOCAL_REGISTRY_PATH
+from drive_on_mars.params import LOCAL_REGISTRY_PATH
+from drive_on_mars.model.model import compile_model
+
 
 
 def save_model(model: keras.Model = None) -> None:
@@ -46,7 +48,9 @@ def load_model(stage="Production") -> keras.Model:
 
         print(Fore.BLUE + f"\nLoad latest model from disk..." + Style.RESET_ALL)
 
-        latest_model = keras.models.load_model(most_recent_model_path_on_disk)
+        latest_model = keras.models.load_model(most_recent_model_path_on_disk, compile=False)
+
+        latest_model = compile_model(latest_model)
 
         print("✅ Model loaded from local disk")
 
