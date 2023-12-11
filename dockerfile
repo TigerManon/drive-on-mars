@@ -4,7 +4,7 @@ FROM python:3.8.6-buster
 
 # COPY allows you to select the folders and files to include in your docker image
 # Here, we will include our api_folder and the requiremenets.txt file
-COPY api_folder /api_folder
+COPY drive_on_mars/api /api
 COPY requirements.txt /requirements.txt
 
 # RUN allows you to run terminal commands when your image gets created
@@ -18,7 +18,7 @@ RUN pip install -r requirements.txt
 # Here, we use uvicorn to control the web server ports
 
 # local
-#CMD uvicorn api_folder.api_file:api --host 0.0.0.0
+# CMD uvicorn api.api_file:api --host 0.0.0.0
 
 # deploy to gcp
 CMD uvicorn api.api_file:api --host 0.0.0.0 --port $PORT
