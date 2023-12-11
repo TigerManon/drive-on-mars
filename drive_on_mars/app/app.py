@@ -5,7 +5,7 @@ import requests
 
 # ----------------------------------------------------------------
 # Using local API
-url = 'http://localhost:8080'
+url = 'http://127.0.0.1:8000'
 
 # Using our remote running API
 # url = 'https://containermars-jnjlxgdooq-ew.a.run.app/predict'
@@ -33,7 +33,7 @@ st.markdown("---")
 
 
 ### Create a native Streamlit file upload input
-st.markdown("### Let's do a simple face recognition 👇")
+st.markdown("### Let's do a simple image upload 👇")
 img_file_buffer = st.file_uploader('Upload an image')
 
 
@@ -80,4 +80,4 @@ params = {
 }
 response = requests.get(url, params=params)
 
-st.text(response.json())
+# st.text(response.json())

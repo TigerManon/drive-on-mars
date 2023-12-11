@@ -3,3 +3,6 @@ fastapi
 uvicorn
 streamlit
 requests
+python-multipart
+
+tensorflow==2.10.0
