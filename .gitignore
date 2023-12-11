@@ -16,3 +16,6 @@ __pycache__
 # Data #
 raw_data/
 *.csv
+
+#Test Docker
+mvp_docker/
