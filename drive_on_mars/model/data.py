@@ -63,7 +63,7 @@ def preproc_image(image_file):
     Each image is set to a single channel greyscale and resized
     """
     image_raw = cv2.imread(image_file)
-    image = image_raw[:,:,0]
+    image = image_raw
     image = cv2.resize(image, dsize = (RESIZE_SHAPE, RESIZE_SHAPE))
 
     return image
