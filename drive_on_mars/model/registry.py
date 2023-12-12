@@ -1,16 +1,17 @@
 ###########
 # Imports #
 ###########
-MODEL_TARGET = "local"
+
 import os
 import time
 import pickle
 import glob
 from colorama import Fore, Style
 from tensorflow import keras
-from drive_on_mars.params import LOCAL_REGISTRY_PATH
-from drive_on_mars.model.model import compile_model
+from google.cloud import storage
 
+from drive_on_mars.params import LOCAL_REGISTRY_PATH, BUCKET_NAME, MODEL_TARGET, PACKAGE_PATH
+from drive_on_mars.model.model import compile_model
 
 
 def save_model(model: keras.Model = None) -> None:
