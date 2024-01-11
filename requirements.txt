@@ -16,5 +16,5 @@ segmentation_models
 
 # img
 matplotlib
-opencv-python
+opencv-python-headless
 colorama

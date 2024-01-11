@@ -40,14 +40,15 @@ def load_model(stage="Production") -> keras.Model:
 
         # Get the latest model version name by the timestamp on disk
         local_model_directory = os.path.join(LOCAL_REGISTRY_PATH, "models")
-        local_model_paths = glob.glob(f"{local_model_directory}/*")
+        local_model_paths = glob.glob(f"{local_model_directory}/*.h5")
 
         if not local_model_paths:
             return None
 
         most_recent_model_path_on_disk = sorted(local_model_paths)[-1]
 
-        print(Fore.BLUE + f"\nLoad latest model from disk..." + Style.RESET_ALL)
+        print(Fore.BLUE + f"\nLoad latest model from disk... " + Style.RESET_ALL)
+        print(most_recent_model_path_on_disk)
 
         latest_model = keras.models.load_model(most_recent_model_path_on_disk, compile=False)
 
@@ -57,6 +58,28 @@ def load_model(stage="Production") -> keras.Model:
 
         return latest_model
 
+    elif MODEL_TARGET == "gcs":
+        print(Fore.BLUE + f"\nLoad latest model from GCS..." + Style.RESET_ALL)
+
+        client = storage.Client()
+        blobs = list(client.get_bucket(BUCKET_NAME).list_blobs(prefix="raw_data/models"))
+
+        print(PACKAGE_PATH)
+        # try:
+        latest_blob = max(blobs, key=lambda x: x.updated)
+        latest_model_path_to_save = os.path.join(PACKAGE_PATH, latest_blob.name)
+        latest_blob.download_to_filename(latest_model_path_to_save)
+
+        latest_model = keras.models.load_model(latest_model_path_to_save, compile=False)
+        latest_model = compile_model(latest_model)
+
+        print("✅ Latest model downloaded from cloud storage")
+
+        return latest_model
+        # except:
+        #     print(f"\n❌ No model found in GCS bucket {BUCKET_NAME}")
+
+            # return None
 
 
 def save_results(params: dict, metrics: dict) -> None:

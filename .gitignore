@@ -25,10 +25,10 @@ raw_data/
 
 # Credentials (or files with potentially credentials inside)
 .env
+.env.yaml
 .credentials
 secrets.toml
 *.json
-
 
 # Data #
 raw_data/

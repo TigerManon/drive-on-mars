@@ -1,14 +1,13 @@
 from fastapi import FastAPI, UploadFile, File
-from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import Response
 
 import numpy as np
 import cv2
-import io
 
 from drive_on_mars.model.registry import load_model
 
 api = FastAPI()
+api.state.model = load_model()
 
 # define a root `/` endpoint
 @api.get("/")
@@ -34,26 +33,33 @@ async def receive_image(img: UploadFile=File(...)):
     contents = await img.read()
 
     nparr = np.fromstring(contents, np.uint8)
-    cv2_img = cv2.imdecode(nparr, cv2.IMREAD_COLOR) # type(cv2_img) => numpy.ndarray
+    cv2_img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
-    print('-'*30,cv2_img.shape)
+    ### Pre-processing: resizing
+    img_preproc = cv2.resize(cv2_img, dsize = (256, 256))
+    ######### >>>>>>>>>> Check how resizing is done in the model
+    img_preproc_arr = np.array([img_preproc])
+    print("="*30,'>>> preproc image now shape:',img_preproc_arr.shape)
 
-    ### Do cool stuff with your image.... For example face detection
+    ### Loading
+    model = api.state.model
+    if model is None:
+        print('-'*30,"MODEL IS NONE")
 
-    # Pre-processing: resizing and rescale
-    img = cv2.resize(cv2_img, dsize = (256, 256))
-    img = img/255
+    ### Model prediction for each class
+    y_pred_probas_arr = model.predict(img_preproc_arr)
+    print('Does the predict work? shape:',y_pred_probas_arr.shape)
 
-    print('-'*30,img.shape)
+    ### Prediction image
+    y_pred_arr = np.argmax(y_pred_probas_arr[:,:,:,:5], axis=3)
+    y_pred = y_pred_arr[0].astype(np.uint8)
+    print('Does the predicted image work? shape:',y_pred.shape)
 
-    model = load_model()
-    # y_pred = model.predict(img)
-    # print(y_pred.shape)
+    return Response(content=y_pred.tobytes(), media_type="image/png")
 
-
-    # For now:
-    output = cv2_img/2
+    # output_image = cv2.resize(y_pred, dsize = (1024, 1024))
 
     ### Encoding and responding with the image
-    im = cv2.imencode('.png', output)[1] # extension depends on which format is sent from Streamlit
-    return Response(content=im.tobytes(), media_type="image/png")
+    # im = cv2.imencode('.png', output_image)[1] # extension depends on which format is sent from Streamlit
+
+    # return Response(content=im.tobytes(), media_type="image/png")
