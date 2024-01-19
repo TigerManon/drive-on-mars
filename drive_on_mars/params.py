@@ -1,8 +1,16 @@
 import os
 
+# Local setup
+
+MODEL_TARGET = os.environ.get("MODEL_TARGET")
+
+GCP_PROJECT = os.environ.get("GCP_PROJECT")
+GCP_REGION = os.environ.get("GCP_REGION")
+BUCKET_NAME = os.environ.get("BUCKET_NAME")
+
 
 # Customize your path here
-PACKAGE_PATH = os.path.dirname(os.getcwd())
+PACKAGE_PATH = os.path.dirname(os.path.dirname(__file__))
 
 DATA_PATH = os.path.join(PACKAGE_PATH, 'raw_data', 'ai4mars-dataset-merged-0.1', 'msl')
 
@@ -15,7 +23,7 @@ MASK_ROVER = os.path.join(DATA_PATH, 'images', 'mxy')
 RANGE_30M = os.path.join(DATA_PATH, 'images', 'rng-30m')
 
 LOCAL_REGISTRY_PATH = os.path.join(PACKAGE_PATH, 'raw_data')
-MODEL_TARGET = "local"
+
 
 labels_key = {
     0: 'soil',

@@ -1,17 +1,34 @@
-.env
+# Standard python ignores
+*.egg-info
+.coverage
+.ipynb_checkpoints
+**/__pycache__/
+.python-version
+*.pyc
+**/build
 
-# OS generated files #
-######################
+# Ignore these macos generated files
 .DS_Store
 __MACOSX
 
-# Jupiter Notebook #
-.pytest_cache
-__pycache__
-*checkpoint.ipynb
-*.ipynb_checkpoints
+# Ignore these Windows generated files
+*Zone.Identifier
 
-*.egg-info
+# Ignore VS Code generated files
+*.vscode
+
+# Raw data
+raw_data/
+*.csv
+*.sqlite
+*.zip
+
+# Credentials (or files with potentially credentials inside)
+.env
+.env.yaml
+.credentials
+secrets.toml
+*.json
 
 # Data #
 raw_data/

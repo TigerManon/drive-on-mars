@@ -4,11 +4,8 @@
 
 import numpy as np
 import pandas as pd
-import os
 import matplotlib.pyplot as plt
 from PIL import Image
-import cv2
-from tqdm import tqdm
 from tensorflow.keras import callbacks
 from sklearn.model_selection import train_test_split
 import segmentation_models as sm
